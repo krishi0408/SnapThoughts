@@ -1,4 +1,6 @@
+//import Note model
 const Note = require("../models/Notes");
+// Import the mongoose library for MongoDB interactions
 const mongoose = require("mongoose");
 
 /**
@@ -6,7 +8,7 @@ const mongoose = require("mongoose");
  * Dashboard
  */
 exports.dashboard = async (req, res) => {
-
+// Set up pagination variables
   let perPage = 12;
   let page = req.query.page || 1;
 
@@ -17,7 +19,7 @@ exports.dashboard = async (req, res) => {
 
  
   try {
-
+// Aggregate and retrieve notes with pagination
     const notes = await Note.aggregate([
       { $sort: { updatedAt: -1 } },
       { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
@@ -31,7 +33,7 @@ exports.dashboard = async (req, res) => {
     .skip(perPage * page - perPage)
     .limit(perPage)
     .exec(); 
-
+   // Get total count of user-specific notes for pagination
     const count = await Note.countDocuments({ user: new mongoose.Types.ObjectId(req.user.id) });
 
 
@@ -54,6 +56,7 @@ exports.dashboard = async (req, res) => {
  * View Specific Note
  */
 exports.dashboardViewNote = async (req, res) => {
+    // Find and render a specific note for viewing
     const note = await Note.findById({ _id: req.params.id })
       .where({ user: req.user.id })
       .lean();
@@ -74,6 +77,7 @@ exports.dashboardViewNote = async (req, res) => {
    * Update Specific Note
    */
   exports.dashboardUpdateNote = async (req, res) => {
+     // Update a specific note and redirect to the dashboard
     try {
       await Note.findOneAndUpdate(
         { _id: req.params.id },
@@ -90,6 +94,7 @@ exports.dashboardViewNote = async (req, res) => {
    * Delete Note
    */
   exports.dashboardDeleteNote = async (req, res) => {
+    // Delete a specific note and redirect to the dashboard
     try {
       await Note.deleteOne({ _id: req.params.id }).where({ user: req.user.id });
       res.redirect("/dashboard");
@@ -103,6 +108,7 @@ exports.dashboardViewNote = async (req, res) => {
  * Add Notes
  */
 exports.dashboardAddNote = async (req, res) => {
+    // Render the add note view
     res.render("dashboard/add", {
       layout: "../views/layouts/dashboard",
     });
@@ -113,6 +119,7 @@ exports.dashboardAddNote = async (req, res) => {
  */
 exports.dashboardAddNoteSubmit = async (req, res) => {
     try {
+      // Create and add a new note, then redirect to the dashboard
       req.body.user = req.user.id;
       await Note.create(req.body);
       res.redirect("/dashboard");
@@ -125,6 +132,7 @@ exports.dashboardAddNoteSubmit = async (req, res) => {
  * Search
  */
 exports.dashboardSearch = async (req, res) => {
+   // Render the search view with empty search results
     try {
       res.render("dashboard/search", {
         searchResults: "",
@@ -138,6 +146,7 @@ exports.dashboardSearch = async (req, res) => {
    * Search For Notes
    */
   exports.dashboardSearchSubmit = async (req, res) => {
+     // Search for notes based on the provided search term and render the search results
     try {
       let searchTerm = req.body.searchTerm;
       const searchNoSpecialChars = searchTerm.replace(/[^a-zA-Z0-9 ]/g, "");
