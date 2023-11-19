@@ -35,3 +35,4 @@ To install and run this project - install dependencies using npm and then start 
 $ npm install
 $ npm start
 ```
+Run the app on `http://localhost:5000`.
