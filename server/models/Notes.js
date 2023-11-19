@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 
+// Create a Mongoose schema
 const Schema = mongoose.Schema;
+// Define the structure of the Note schema
 const NoteSchema = new Schema({
   user: {
-    type: Schema.ObjectId,
-    ref: 'User'
+    type: Schema.ObjectId, 
+    ref: 'User'  // Reference to the User model
   },
   title: {
     type: String,
@@ -23,6 +25,6 @@ const NoteSchema = new Schema({
     default: Date.now()
   }
 });
-
+// Create and export the Note model based on the defined schema
 module.exports = mongoose.model('Note', NoteSchema);
 

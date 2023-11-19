@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
+// Configure Google OAuth strategy
 passport.use(
     new GoogleStrategy(
       {
@@ -11,6 +12,7 @@ passport.use(
         callbackURL: process.env.GOOGLE_CALLBACK_URL,
       },
       async function (accessToken, refreshToken, profile, done) {
+            // Create a new user object with Google profile data
         const newUser = {
           googleId: profile.id,
           displayName: profile.displayName,
@@ -20,10 +22,13 @@ passport.use(
         };
   
         try {
+             // Check if the user already exists in the database
           let user = await User.findOne({ googleId: profile.id });
           if (user) {
+            // If the user exists, pass the user data to the next middleware
             done(null, user);
           } else {
+             // If the user doesn't exist, create a new user in the database
             user = await User.create(newUser);
             done(null, user);
           }
@@ -75,7 +80,7 @@ router.get('/logout', (req, res) => {
     done(null, user.id);
   });
   
-  // Retrieve user data from session.
+// Deserialize user data from the session
  
   passport.deserializeUser(async (id, done) => {
     try {

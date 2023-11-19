@@ -1,3 +1,4 @@
+//Loading env var from a .env file
 require('dotenv').config();
 
 const express = require('express');
@@ -12,22 +13,28 @@ const methodOverride = require("method-override");
 const app = express();
 const port = 5000 || process.env.PORT;
 
+//configure session middleware
 app.use(session({
-  secret: 'note app',
+  secret: 'note app', // secret key for session
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI
+    mongoUrl: process.env.MONGODB_URI //MongoDB session URI for session store
   }),
   // cookie: { maxAge: new Date ( Date.now() + (3600000) ) } 
   // Date.now() - 30 * 24 * 60 * 60 * 1000
 }));
+//Inititalise and configure passport
 app.use(passport.initialize());
 app.use(passport.session());
+
 // pass data through forms and pages
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+//enable method override for PUT and delete requests 
 app.use(methodOverride("_method"));
+
 //connect to Database
 connectDB();
 
