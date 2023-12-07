@@ -1,0 +1,15 @@
+inputSet:
+  name: input_set
+  identifier: input_set
+  orgIdentifier: default
+  projectIdentifier: demoKt
+  pipeline:
+    identifier: Demo_KT
+    properties:
+      ci:
+        codebase:
+          build:
+            type: PR
+            spec:
+              number: <+trigger.prNumber>
+  object Object: pipeline.properties.ci.codebase
