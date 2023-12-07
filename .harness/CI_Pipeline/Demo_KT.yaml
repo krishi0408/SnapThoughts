@@ -32,3 +32,9 @@ pipeline:
                   spec:
                     shell: Sh
                     command: echo hello
+                  when:
+                    stageStatus: Success
+                    condition: <+trigger.payload.comment.body> == "trigger cipipe"
+        when:
+          pipelineStatus: Success
+          condition: <+trigger.payload.comment.body> == "trigger cipipe" || <+trigger.payload.action> == "reopened" || <+trigger.payload.action> == "ready_for_review" || <+trigger.payload.action> == "synchronize" || <+trigger.payload.action> == "opened"
